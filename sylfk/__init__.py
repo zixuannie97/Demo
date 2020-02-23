@@ -1,0 +1,32 @@
+from werkzeug.serving import run_simple
+# ...
+
+class SYLFk:
+
+  # ?????
+  def __init__(self):
+    self.host = '127.0.0.1' # ????
+    self.port = 8086  # ????
+# ...
+  # ????
+
+  def dispatch_request(self):
+	pass
+
+  def run(self, host=None, port=None, **options):
+    # ????????????????
+    for key, value in options.items():
+      if value is not None:
+        self.__setattr__(key, value)
+
+    # ?? host ?? None??? self.host
+    if host:
+        self.host = host
+
+    # ?? port ?? None??? self.port
+    if port:
+        self.port = port
+
+    # ??????????????????????? werkzeug ? run_simple
+    run_simple(hostname=self.host, port=self.port, application=self, **options)
+# ...
