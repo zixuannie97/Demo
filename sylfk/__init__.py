@@ -1,7 +1,15 @@
 from werkzeug.serving import run_simple
+import sylfk.exceptions as exceptions
 # ...
 from sylfk.wsgi_adapter import wsgi_app
 from werkzeug.wrappers import Response
+import os
+
+class ExecFunc:
+    def __init__(self, func, func_type, **options):
+        self.func = func
+        self.options = options
+        self.func_type = func_type
 
 class SYLFk:
 
@@ -9,8 +17,26 @@ class SYLFk:
   def __init__(self):
     self.host = '127.0.0.1' # ????
     self.port = 8086  # ????
+    self.url_map = {}
+    self.static_map = {}
+    self.function_map = {}
+    self.static_folder = static_folder
 # ...
   # ????
+
+  def add_url_rule(self, url, func, func_type, endpoint = None, **options):
+     if endpoint is None:
+          endpoint = func.__name__
+
+     if url in self.url_map:
+            raise exceptions.URLExistsError
+
+     if endpoint in self.function_map and func_type != 'static':
+         raise exceptions.EndpointExistsError
+
+     self.url_map[url] = endpoint
+
+     self.function_map[endpoint] = ExecFunc(func, func_type, **options)
 
   def dispatch_request(self, request):
       status = 200
