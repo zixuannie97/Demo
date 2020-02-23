@@ -1,5 +1,7 @@
 from werkzeug.serving import run_simple
 # ...
+from sylfk.wsgi_adapter import wsgi_app
+from werkzeug.wrappers import Response
 
 class SYLFk:
 
@@ -10,8 +12,17 @@ class SYLFk:
 # ...
   # ????
 
-  def dispatch_request(self):
-	pass
+  def dispatch_request(self, request):
+      status = 200
+
+      headers = {
+              'Server': 'Niezixuan Framework'
+            }
+
+      return Response('<h1>Hello, Framework</h1>', content_type='text/html', headers = headers, status = status)
+
+  def __call__(self, environ, start_response):
+      return wsgi_app(self, environ, start_response)
 
   def run(self, host=None, port=None, **options):
     # ????????????????
